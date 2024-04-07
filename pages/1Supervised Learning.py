@@ -1,4 +1,4 @@
-#Input the relevant libraries
+# Input the relevant libraries
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -14,7 +14,7 @@ import time
 # Define the Streamlit app
 def app():
 
-    st.subheader('Supervised Learning, Classification, and KNN with Iris Dataset')
+    st.subheader('Supervised Learning, Classification, and KNN with Audit Risk Dataset')
     text = """**Supervised Learning:**
     \nSupervised learning is a branch of machine learning where algorithms learn from labeled data. 
     This data consists of input features (X) and corresponding outputs or labels (y). The algorithm learns a 
@@ -25,27 +25,20 @@ def app():
     categories. The goal is to build a model that can predict the category label of a new data 
     point based on its features.
     \n**K-Nearest Neighbors (KNN):**
-    KNN is a simple yet powerful algorithm for both classification and regression tasks. 
-    \n**The Iris Dataset:**
-    The Iris dataset is a popular benchmark dataset in machine learning. It contains information about 150 
-    iris flowers from three different species: Iris Setosa, Iris Versicolor, and Iris Virginica. 
-    Each flower is described by four features:
-    * Sepal length (cm)
-    * Sepal width (cm)
-    * Petal length (cm)
-    * Petal width (cm)
-    \n**KNN Classification with Iris:**
+    KNN is a simple yet powerful algorithm for both classification and regression tasks.
+    \n**The Audit Risk Dataset:**
+    The "Audit Risk Dataset" provides information about different firms and their audit risk. It consists of various features such as sector score, historical risk scores, discrepancy amounts, and more.
+    \n**KNN Classification with Audit Risk:**
     \n1. **Training:**
-    * The KNN algorithm stores the entire Iris dataset (features and labels) as its training data.
+    * The KNN algorithm stores the entire Audit Risk dataset (features and labels) as its training data.
     \n2. **Prediction:**
-    * When presented with a new iris flower (unknown species), KNN calculates the distance (often Euclidean distance) 
-    between this flower's features and all the flowers in the training data.
+    * When presented with new firm data, KNN calculates the distance (often Euclidean distance) 
+    between this firm's features and all the features in the training data.
     * The user defines the value of 'k' (number of nearest neighbors). KNN identifies the 'k' closest 
-    data points (flowers) in the training set to the new flower.
-    * KNN predicts the class label (species) for the new flower based on the majority vote among its 
-    'k' nearest neighbors. For example, if three out of the five nearest neighbors belong to Iris Setosa, 
-    the new flower is classified as Iris Setosa.
-    **Choosing 'k':**
+    data points (firms) in the training set to the new firm.
+    * KNN predicts the class label for the new firm based on the majority vote among its 
+    'k' nearest neighbors.
+    \n**Choosing 'k':**
     The value of 'k' significantly impacts KNN performance. A small 'k' value might lead to overfitting, where the 
     model performs well on the training data but poorly on unseen data. Conversely, a large 'k' value might not 
     capture the local patterns in the data and lead to underfitting. The optimal 'k' value is often determined 
@@ -63,10 +56,16 @@ def app():
     )
 
     if st.button("Begin"):
-        # Load the Iris dataset
-        iris = datasets.load_iris()
-        X = iris.data  # Features
-        y = iris.target  # Target labels (species)
+        # Load the Audit Risk dataset
+        audit_risk = pd.read_csv('audit_risk_dataset.csv')
+        st.write(audit_risk.head())
+        st.write('Shape of the dataset:', audit_risk.shape)
+
+        st.write('Column Names:', audit_risk.columns.tolist())
+
+        # Prepare the features (X) and target variable (y)
+        X = audit_risk[['Sector_score', 'PARA_A', 'Score_A', 'Risk_A', 'PARA_B', 'Score_B', 'Risk_B', 'TOTAL', 'numbers']]
+        y = audit_risk['Risk']
 
         # KNN for supervised classification (reference for comparison)
 
@@ -78,6 +77,8 @@ def app():
 
         # Predict the cluster labels for the data
         y_pred = knn.predict(X)
+
+        st.subheader(' --- KNN Classification Results ---')
         st.write('Confusion Matrix')
         cm = confusion_matrix(y, y_pred)
         st.text(cm)
@@ -93,12 +94,12 @@ def app():
         for label, color in zip(unique_labels, colors):
             indices = y_pred == label
             # Use ax.scatter for consistent plotting on the created axis
-            ax.scatter(X[indices, 0], X[indices, 1], label=iris.target_names[label], c=color)
+            ax.scatter(X.loc[indices, 'Sector_score'], X.loc[indices, 'PARA_A'], label=label, c=color)
 
         # Add labels and title using ax methods
-        ax.set_xlabel('Sepal length (cm)')
-        ax.set_ylabel('Sepal width (cm)')
-        ax.set_title('Sepal Length vs Width Colored by Predicted Iris Species')
+        ax.set_xlabel('Sector_score')
+        ax.set_ylabel('PARA_A')
+        ax.set_title('Sector_score vs PARA_A by Predicted Risk Level')
 
         # Add legend and grid using ax methods
         ax.legend()
@@ -106,6 +107,6 @@ def app():
         st.pyplot(fig)
 
 
-#run the app
+# Run the app
 if __name__ == "__main__":
     app()
