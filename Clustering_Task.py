@@ -6,9 +6,9 @@ def app():
     text = """Comparing Supervised and Unsupervised Learning: KNN vs KMeans"""
     st.subheader(text)
 
-    text = """Louie F. Cervantes, M. Eng. (Information Engineering) \n\n
+    text = """John Marc M. Abogador BSCS 3A AI \n\n
     CCS 229 - Intelligent Systems
-    Computer Science Department
+    Bachelor of Science in Computer Science
     College of Information and Communications Technology
     West Visayas State University"""
     st.text(text)
